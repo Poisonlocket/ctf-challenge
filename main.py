@@ -43,7 +43,10 @@ def admin(request: Request):
     username = session
 
     try:
-        output = eval(username)
+        if username == "guest":
+            output = ""
+        else: 
+            output = eval(username)
     except:
         info = "didnt get paid enough to handle this securely this code really makes me evaluate my choices"
         output = ""
