@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, Response, HTTPException
+import subprocess
 
 app = FastAPI()
 
@@ -7,7 +8,7 @@ FLAG = "quack{0ne_c00k1e_pl31se}"
 # create flag file when container/app starts
 @app.on_event("startup")
 def create_flag():
-    with open("/flag.txt", "w") as f:
+    with open("./flag.txt", "w") as f:
         f.write(FLAG)
 
 
@@ -35,6 +36,7 @@ def get_cookie(response: Response, username: str = "guest"):
 @app.get("/admin")
 def admin(request: Request):
     info = ""
+    output = ""
     session = request.cookies.get("session")
 
     if not session:
@@ -44,15 +46,21 @@ def admin(request: Request):
 
     try:
         if username == "guest":
+            info = "didnt get paid enough to handle this securely this code really makes me evaluate my choices"
             output = ""
-        else: 
-            output = eval(username)
-    except:
+            print("no")
+        else:
+            print("yes")
+            info = "didnt get paid enough to handle this securely this code really makes me evaluate my choices"
+            args = username.split()
+            command_exec = subprocess.run(args, capture_output=True, text=True)
+            output = command_exec.stdout + command_exec.stderr
+    except Exception:
         info = "didnt get paid enough to handle this securely this code really makes me evaluate my choices"
         output = ""
 
     return {
-        "message": "Welcome to the admin panel",
         "username": username,
+        "message": "Welcome to the admin panel",
         "admin_info": info + " " + output
     }
